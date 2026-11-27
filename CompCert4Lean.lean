@@ -73,6 +73,7 @@ import CompCert4Lean.Backend.Unusedglobproof
 import CompCert4Lean.Backend.ValueAnalysis
 import CompCert4Lean.Backend.ValueDomain
 import CompCert4Lean.Cfrontend.Clight
+import CompCert4Lean.Cfrontend.ClightDeterm
 import CompCert4Lean.Cfrontend.Cminorgen
 import CompCert4Lean.Cfrontend.Cminorgenproof
 import CompCert4Lean.Cfrontend.Cop
