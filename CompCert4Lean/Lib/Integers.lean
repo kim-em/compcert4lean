@@ -580,6 +580,30 @@ def makeGeneratedApplication (bits : Nat) : GeneratedApplication where
   signed_bitfield_extract := signed_bitfield_extract
   bitfield_insert := bitfield_insert
 
+/-! ## Residue view
+
+Public statements of the residue lemmas above, for clients that reason about
+words through `Nat`, `Int` or `BitVec`. -/
+
+theorem val_lt_two_pow {bits : Nat} (x : Word bits) : x.val < 2 ^ bits := val_lt x
+
+theorem intval_eq_of_nat_val {bits : Nat} (x : Word bits) :
+    x.intval = ZArith.BinInt.Z.of_nat x.val := intval_eq_zOfNat_val x
+
+theorem zToNat_of_nat (n : Nat) : zToNat (ZArith.BinInt.Z.of_nat n) = n := zToNat_zOfNat n
+
+theorem val_repr_of_nat (bits n : Nat) :
+    (repr bits (ZArith.BinInt.Z.of_nat n)).val = n % 2 ^ bits := by
+  rw [val_repr_residue]
+  exact residue_zOfNat bits n
+
+theorem val_repr_of_int (bits : Nat) (i : Int) :
+    (repr bits (CompCert4Lean.Foundation.Numbers.Rocq.Coq.zOfInt i)).val =
+      Int.toNat (i % ((2 ^ bits : Nat) : Int)) := val_repr bits i
+
+theorem val_add {bits : Nat} (x y : Word bits) :
+    (add x y).val = (x.val + y.val) % (2 ^ bits) := add_val x y
+
 end WordCore
 
 namespace Int
