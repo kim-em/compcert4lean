@@ -604,6 +604,22 @@ theorem val_repr_of_int (bits : Nat) (i : Int) :
 theorem val_add {bits : Nat} (x y : Word bits) :
     (add x y).val = (x.val + y.val) % (2 ^ bits) := add_val x y
 
+/-- The comparison underlying `lt`, `ltu`, `signed` and the carry operations. -/
+theorem zltSelect_eq {A : Type} (x y : Z) (a b : A) :
+    zltSelect x y a b =
+      if CompCert4Lean.Foundation.Numbers.Rocq.Coq.intOfZ x <
+          CompCert4Lean.Foundation.Numbers.Rocq.Coq.intOfZ y then a else b := by
+  unfold zltSelect sumboolSelect
+  split
+  · rename_i h _
+    have h' : CompCert4Lean.Foundation.Numbers.Rocq.Coq.intOfZ x <
+        CompCert4Lean.Foundation.Numbers.Rocq.Coq.intOfZ y := h
+    simp [h']
+  · rename_i h _
+    have h' : CompCert4Lean.Foundation.Numbers.Rocq.Coq.intOfZ y ≤
+        CompCert4Lean.Foundation.Numbers.Rocq.Coq.intOfZ x := h
+    simp [Int.not_lt.mpr h']
+
 end WordCore
 
 namespace Int
