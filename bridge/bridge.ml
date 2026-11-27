@@ -124,7 +124,11 @@ let source_json configuration (source : Csyntax.program) =
           "definitions", enc_list (enc_pair enc_pos enc_CGlobdef) source.prog_defs;
           "public", enc_list enc_pos source.prog_public;
           "main", enc_pos source.prog_main;
-          "composites", enc_list enc_Ctypes_composite_definition source.prog_types]
+          "composites", enc_list enc_Ctypes_composite_definition source.prog_types;
+          "names", `List (List.map (fun (identifier, name) -> `List [enc_pos identifier; `String name])
+            (List.sort (fun (left, _) (right, _) -> compare (Camlcoq.P.to_int left) (Camlcoq.P.to_int right))
+              (Hashtbl.fold (fun identifier name result -> (identifier, name) :: result)
+                Camlcoq.string_of_atom [])))]
 
 let same_ireg left right = Asm.ireg_eq left right
 
@@ -344,8 +348,41 @@ let respond_error error =
   Yojson.Basic.to_channel stdout (`Assoc ["ok", `Bool false; "error", `String message]);
   output_char stdout '\n'; flush stdout
 
-let run_request request read_request =
+(* Print a whole program whose identifiers are not those of a frontend run in
+   this process (for example several translation units renamed into one
+   numbering and linked in Lean). The request supplies every identifier's
+   assembly name; no symbol has frontend declaration facts, so the printer
+   uses its defaults: global symbols, functions in .text, initialised
+   variables in .data with 8-byte alignment. *)
+let print_named request =
   configure request;
+  List.iter (fun entry ->
+    match entry with
+    | `List [identifier; `String name] ->
+        let atom = P.of_int (int_of_string (Yojson.Basic.Util.to_string identifier)) in
+        Hashtbl.replace string_of_atom atom name;
+        Hashtbl.replace atom_of_string name atom
+    | _ -> failwith "invalid name entry")
+    (Yojson.Basic.Util.to_list (member "names" request));
+  let data = Yojson.Basic.from_file (text "input" request) in
+  if text "target" data <> target () then failwith "unsupported assembly target";
+  let program = dec_AProgram (member "program" data) in
+  check_program_compatibility program;
+  match Asmexpand.expand_program program with
+  | Errors.Error errors ->
+      Format.eprintf "%a@." Driveraux.print_error errors;
+      failwith "assembly expansion failed"
+  | Errors.OK expanded ->
+      let channel = open_out (text "output" request) in
+      Fun.protect ~finally:(fun () -> close_out channel)
+        (fun () -> PrintAsm.print_program channel expanded)
+
+let run_request request read_request =
+  if member "operation" request = `String "print_named" then begin
+    print_named request;
+    respond ["phase", `String "assembly"]
+  end else
+  let () = configure request in
   Clflags.prepro_options := List.rev (dec_list Yojson.Basic.Util.to_string (member "preprocessor" request));
   let input = text "source" request in
   let preprocessed = text "preprocessed" request in
