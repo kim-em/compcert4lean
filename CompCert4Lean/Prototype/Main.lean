@@ -354,9 +354,3 @@ def run (args : List String) : IO UInt32 := do
       return 2
 
 end CompCert4Lean.Prototype
-
-def main (args : List String) : IO UInt32 := do
-  try CompCert4Lean.Prototype.run args
-  catch error =>
-    (← IO.getStderr).putStrLn ("leanCompiler: " ++ error.toString)
-    return 1
