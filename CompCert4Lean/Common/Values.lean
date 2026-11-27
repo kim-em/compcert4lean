@@ -187,11 +187,7 @@ private def intRolm (x amount mask : CCInt) : CCInt := Int.or (Int.rol x amount)
 private def int64Rolm (x amount : CCInt) (mask : CCInt64) : CCInt64 :=
   Int64.or (Int64.rol (Int64.repr (Int.unsigned x)) (Int64.repr (Int.unsigned amount))) mask
 
-def block : Type := positive
-
-instance : DecidableEq block := by
-  change DecidableEq positive
-  exact inferInstance
+abbrev block : Type := positive
 
 def eq_block (x y : block) : Sumbool (x = y) (x ≠ y) :=
   CompCert4Lean.Lib.Coqlib.peq x y

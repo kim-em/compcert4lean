@@ -45,12 +45,7 @@ private def decEqSumbool {A : Type} [DecidableEq A] (x y : A) :
 
 /-! ## Syntactic elements -/
 
-def ident : Type := positive
-
-private instance identDecidableEq : DecidableEq ident := fun x y =>
-  match CompCert4Lean.Lib.Coqlib.peq x y with
-  | .left h => isTrue h
-  | .right h => isFalse h
+abbrev ident : Type := positive
 
 def ident_eq (x y : ident) : Sumbool (x = y) (x ≠ y) :=
   CompCert4Lean.Lib.Coqlib.peq x y

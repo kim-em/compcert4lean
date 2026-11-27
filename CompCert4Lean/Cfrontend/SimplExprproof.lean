@@ -3143,11 +3143,10 @@ theorem alloc_variables_preserved :
   | nil e m =>
       exact Clight.alloc_variables.nil e m
   | cons halloc hrest ih =>
-      apply Clight.alloc_variables.cons
-      · rw [comp_env_preserved (binary64_certificate := binary64_certificate)
-          (binary32_certificate := binary32_certificate) p tp hmatch]
-        exact halloc
-      · exact ih
+      refine Clight.alloc_variables.cons (hrest := ih) (halloc := ?_)
+      rw [comp_env_preserved (binary64_certificate := binary64_certificate)
+        (binary32_certificate := binary32_certificate) p tp hmatch]
+      exact halloc
 
 end CompCert4Lean.Cfrontend.SimplExprproof
 

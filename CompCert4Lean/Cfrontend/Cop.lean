@@ -2411,8 +2411,7 @@ theorem sem_binary_operation_inj :
         have sameImage := Option.some.inj (firstMapped.symm.trans secondMapped)
         cases sameImage
         rw [if_pos (show identEq firstTargetBlock firstTargetBlock = true by
-          simp only [identEq, decide_eq_true_eq]
-          rfl)]
+          simp only [identEq, decide_eq_true_eq])]
         split at sourceResult
         next sizeRange =>
           rw [if_pos sizeRange, Ptrofs.sub_shifted_proof_api]

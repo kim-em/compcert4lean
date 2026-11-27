@@ -5739,7 +5739,7 @@ theorem match_cont_free_env : match_cont_free_envStatement := by
           rcases List.mem_map.mp hmem with ⟨id_b_ty, hel, heq⟩
           rcases id_b_ty with ⟨id, b0', ty⟩
           simp [block_of_binding] at heq
-          have hb0 : b0' = b0 := congrArg Prod.fst heq
+          have hb0 : b0' = b0 := heq.1
           subst b0'
           have hget := PTree.elements_complete_proof e id (b0, ty) hel
           exact Plt_Ple_trans b lo b0 (by exact hb) (henv.me_range id b0 ty hget).1

@@ -125,7 +125,6 @@ inductive type : Type where
 
 export type (Tvoid Tint Tlong Tfloat Tpointer Tarray Tfunction Tstruct Tunion)
 
-private instance identDecidableEq : DecidableEq ident := inferInstance
 
 mutual
   private def typeDecEq : (t1 t2 : type) → Decidable (t1 = t2)
