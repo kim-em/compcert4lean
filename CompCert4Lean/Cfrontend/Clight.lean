@@ -169,11 +169,11 @@ def globalenv (p : program) : genv :=
   { genv_genv := Genv.globalenv (program_of_program p)
     genv_cenv := p.prog_comp_env }
 
-def env : Type := PTree.t (block × type)
+abbrev env : Type := PTree.t (block × type)
 
 def empty_env : env := PTree.empty (block × type)
 
-def temp_env : Type := PTree.t val
+abbrev temp_env : Type := PTree.t val
 
 inductive deref_loc (ty : type) (m : mem) (b : block) (ofs : ptrofs) :
     bitfield → val → Prop where

@@ -35,7 +35,7 @@ inductive tree (A : Type) : Type where
 export tree (Empty Nodes)
 export tree' (Node001 Node010 Node011 Node100 Node101 Node110 Node111)
 
-def t (A : Type) : Type := tree A
+abbrev t (A : Type) : Type := tree A
 
 def Node {A : Type} (l : tree A) (o : Option A) (r : tree A) : tree A :=
   match l, o, r with
