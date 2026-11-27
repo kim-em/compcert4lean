@@ -108,6 +108,7 @@ import CompCert4Lean.Common.Switch
 import CompCert4Lean.Common.Unityping
 import CompCert4Lean.Common.Values
 import CompCert4Lean.Config
+import CompCert4Lean.Driver.ClightCompiler
 import CompCert4Lean.Driver.Compiler
 import CompCert4Lean.Driver.Compopts
 import CompCert4Lean.Driver.Diagnostics
